@@ -167,15 +167,15 @@ while True:
 	if(ed == "E" or ed == "ENCRYPT"):
 		output = []
 		m = input("Enter message: ")
-		k = eval(input("Enter Public Key: "))
+		k = numInput("Enter Public Key: ")
 		print("YOUR N is: " + str(n))
-		k2 = eval(input("Enter N Value: "))
+		k2 = numInput("Enter N Value: ")
 		for letter in m:
 			output.append(ersa(letter, k, k2))
 		print(output)
 	elif(ed == "D" or ed == "DECRYPT"):
 		output = ""
-		m = eval(input("Enter list: "))
+		m = numInput("Enter list: ")
 		i = 0
 		plast = 0
 		for item in m:
@@ -192,10 +192,10 @@ while True:
 		data = datain.readlines()
 		datain.close()
 		output = []
-		k = eval(input("Enter Public Key: "))
+		k = numInput("Enter Public Key: ")
 		print("YOUR N is:", end=" ")
 		print(n)
-		k2 = eval(input("Enter N Value: "))
+		k2 = numInput("Enter N Value: ")
 		i=0
 		for item in data:
 			m = data[i]
