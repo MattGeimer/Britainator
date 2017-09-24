@@ -1,5 +1,7 @@
+#Britainator is a python program written by Matt Geimer
 import fractions
 
+#Defines numInput, a function that will repeat a question until an integer is entered
 def numInput(message):
 	inp = input(message)
 	while True:
@@ -18,6 +20,7 @@ WARNING: DO NOT PERFORM THIS ACTION UNLESS YOU KNOW WHAT YOU ARE DOING, IT COULD
 '''
 manOverride = 0
 
+# p and q are prime numbers that when multiplied together are greater than and coprime to e
 p = 0
 q = 0
 e = 0
@@ -31,13 +34,15 @@ def phi(n):
 			amount += 1
 
 	return amount
-#If opens config
+
+#opens config to check if run before and if config is correctly setup
 filein = open("config.txt", 'r')
 fdat = filein.readlines()
 for i in range(0,len(fdat)):
 	fdat[i] = eval(fdat[i])
 filein.close()
 #First line of config is first run or not (1 is no)
+#If fdat (config) is less than necessary 8 parts, add in 0s until there are 8 parts and rerun first setup
 if(len(fdat)<=7):
 	fdat = []
 	while(len(fdat)<8):
@@ -150,7 +155,7 @@ def drsa(m, d, n):
 	m = (m ** d) % n
 	m = chr(m)
 	return m
-#^Old decryption algorithm (Slow, not unused)
+#^Old decryption algorithm (Slow, not used)
 
 
 def drsaa(m,dp,dq,p,q):
