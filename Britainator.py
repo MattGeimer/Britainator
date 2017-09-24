@@ -1,154 +1,187 @@
 import fractions
+
+def numInput(message):
+	inp = input(message)
+	while True:
+		try:
+			inp = int(inp)
+		except ValueError:
+			inp = input(message)
+		else:
+			return inp
+			break
+
 #SETUP
+'''
+MANUAL OVERRIDE: PICK P Q AND E VALUES AND SET MANOVERRIDE TO 1
+WARNING: DO NOT PERFORM THIS ACTION UNLESS YOU KNOW WHAT YOU ARE DOING, IT COULD BREAK THE PROGRAM
+'''
+manOverride = 0
 
-#MANUAL
-#Choose 2 prime numbers
-p = 149
-q = 679
-#Pick Encryption key (Prime number)
-e = 787
-
-#AUTOMATIC (DO NOT TOUCH)
-#Euler's Totient of n
-n = p * q
+p = 0
+q = 0
+e = 0
 
 
 def phi(n):
-        amount = 0
+	amount = 0
 
-        for k in range(1, n + 1):
-                if fractions.gcd(n, k) == 1:
-                        amount += 1
+	for k in range(1, n + 1):
+		if fractions.gcd(n, k) == 1:
+			amount += 1
 
-        return amount
-
+	return amount
+#If opens config
 filein = open("config.txt", 'r')
 fdat = filein.readlines()
-r1 = eval(fdat[0])
 filein.close()
+#First line of config is first run or not (1 is no)
+if(len(fdat)<=7):
+	fdat = []
+	while(len(fdat)<8):
+		fdat.append(str(0) + '\n')
+	fileout = open("config.txt", 'w')
+	fileout.writelines(fdat)
+	fileout.close()
+	filein = open("config.txt", 'r')
+	fdat = filein.readlines()
+	filein.close()
+	r1 = 0
+else:
+	r1 = eval(fdat[0])
+for i in range(0,len(fdat)):
+	fdat[i] = eval(fdat[i])
 if(r1 == 1):
-        lcmt = open("config.txt", 'r')
-        fdat = lcmt.readlines()
-        lcmt.close()
-        lcm = eval(fdat[1])
-        if(p != eval(fdat[2]) or q != eval(fdat[3]) or e != eval(fdat[4])):
-                r1 = 0
+	#If not first run, read data with long process time and check other data that affects LCM is changed
+	lcmt = open("config.txt", 'r')
+	fdat = lcmt.readlines()
+	lcmt.close()
+	lcm = eval(fdat[1])
+	if(p != eval(fdat[2]) or q != eval(fdat[3]) or e != eval(fdat[4])):
+		#If changed, run the first run script
+		r1 = 0
 if(r1 == 0):
-        lcm = phi(n)
-        fileout = open("config.txt", 'r')
-        fdat = fileout.readlines()
-        fileout.close()
-        fileout = open("config.txt", 'w')
-        fdat[0] = str(1) + '\n'
-        fdat[1] = str(lcm) + '\n'
-        fdat[2] = str(p) + '\n'
-        fdat[3] = str(q) + '\n'
-        fdat[4] = str(e) + '\n'
-        fileout.writelines(fdat)
-        fileout.close()
+	if(manOverride == 0):
+		p = numInput("Enter a prime number: ")
+		q = numInput("Enter a prime number: ")
+		n = p * q
+		e = numInput("Enter a number less than and coprime to " + str(n) + ": ")
+	else:
+		n = p * q
+	#Find Euler's totient
+	lcm = phi(n)
+	#^ Longest processing time
+	#Open config file and load into fdat list
+	fileout = open("config.txt", 'r')
+	fdat = fileout.readlines()
+	fileout.close()
+	fileout = open("config.txt", 'w')
+	#Change fdat list to record parameters and required data
+	fdat[0] = str(1) + '\n'
+	fdat[1] = str(lcm) + '\n'
+	fdat[2] = str(p) + '\n'
+	fdat[3] = str(q) + '\n'
+	fdat[4] = str(e) + '\n'
+	#Save data to config
+	fileout.writelines(fdat)
+	fileout.close()
+	print("Your RSA encryption system is now set up with the parameters provided")
 
 if(type(lcm/e) == 'float'):
-        raise Exception('Your encryption key is not coprime with lcm (try a different number)')
+	#Ensure parameter of RSA is correct
+	raise Exception('Your encryption key is not coprime with lcm (try a different number)')
+
 
 def egcd(a, b):
-        if a == 0:
-                return (b, 0, 1)
-        else:
-                g, y, x = egcd(b % a, a)
-                return (g, x - (b // a) * y, y)
+	if a == 0:
+		return (b, 0, 1)
+	else:
+		g, y, x = egcd(b % a, a)
+		return (g, x - (b // a) * y, y)
 
 
 def modinv(a, m):
-        g, x, y = egcd(a, m)
-        if g != 1:
-                raise Exception('modular inverse does not exist')
-        else:
-                return x % m
+	g, x, y = egcd(a, m)
+	if g != 1:
+		raise Exception('modular inverse does not exist')
+	else:
+		return x % m
+#^ Define Modular Multiplicitive Inverse Finder
+#Find modular multiplicitive inverse of encryption key
 d = modinv(e, lcm)
+
+if(r1 == 0):
+	#If first run, then add chinese remainder theorum numbers to config
+	fileout = open("config.txt", 'r')
+	fdat = fileout.readlines()
+	fileout.close()
+	dp = d % (p-1)
+	dq = d % (q-1)
+	qinv = modinv(q, p)
+	fileout = open("config.txt", 'w')
+	fdat[5] = str(dp) + '\n'
+	fdat[6] = str(dq) + '\n'
+	fdat[7] = str(qinv) + '\n'
+	fileout.writelines(fdat)
+	fileout.close()
+else:
+	#Otherwise load chinese remainder theorum numbers from config
+	filein = open("config.txt", 'r')
+	fdat = filein.readlines()
+	filein.close()
+	dp = eval(fdat[5])
+	dq = eval(fdat[6])
+	qinv = eval(fdat[7])
 
 
 def ersa(m, e, n):
-        m = ord(m)
-        #ENCRYPTION
-        m = (m ** e)%n
-        return m
+	m = ord(m)
+	#ENCRYPTION
+	m = (m ** e) % n
+	return m
+#^Encryption algorithm
 
 
 def drsa(m, d, n):
-        #ENCRYPTION
-        m = (m ** d) % n
-        m = chr(m)
-        return m
+	#DECRYPTION
+	m = (m ** d) % n
+	m = chr(m)
+	return m
+#^Old decryption algorithm (Slow, not unused)
+
+
+def drsaa(m,dp,dq,p,q):
+	m1 = (m ** dp) % p
+	m2 = (m ** dq) % q
+	h = (qinv * (m1 - m2)) % p
+	m = m2 + (h * q)
+	return chr(m)
+#^New decryption algorithm using Chinese Remainder Theorum
+
 
 while True:
-        ed = input("Encrypt of Decrypt: ").upper()
-        if(ed == "E" or ed == "ENCRYPT"):
-                output = []
-                m = input("Enter message: ")
-                k = eval(input("Enter Public Key: "))
-                print("YOUR N is:", end=" ")
-                print(n)
-                k2 = eval(input("Enter N Value: "))
-                for letter in m:
-                        output.append(ersa(letter, k, k2))
-                print(output)
-        elif(ed == "D" or ed == "DECRYPT"):
-                output = ""
-                m = eval(input("Enter list: "))
-                i = 0
-                plast = 0
-                for item in m:
-                        output += drsa(item, d, n)
-                        perc = round(i / len(m) * 100, 0)
-                        if(perc > plast):
-                                plast = perc
-                                print(perc, end="")
-                                print("%")
-                        i += 1
-                print(output)
-        elif(ed == "DATAE"):
-            data = []
-            datain = open("data.txt", 'r')
-            data = datain.readlines()
-            datain.close()
-            output = []
-            k = eval(input("Enter Public Key: "))
-            print("YOUR N is:", end=" ")
-            print(n)
-            k2 = eval(input("Enter N Value: "))
-            i=0
-            for item in data:
-                m = data[i]
-                for letter in m:
-                        output.append(ersa(letter, k, k2))
-                data[i] = str(output) + '\n'
-                i += 1
-            dataout = open("data.txt", 'w')
-            dataout.writelines(data)
-            dataout.close()
-            data = []
-        elif(ed == "DATAD"):
-            datain = open("data.txt", 'r')
-            data = datain.readlines()
-            datain.close()
-            i=0
-            for item in data:
-                output = ""
-                m = eval(data[i])
-                plast = 0
-                for item in m:
-                    output += drsa(item, d, n)
-                    perc = round(i * q / (len(m) * len(data)) * 100, 0)
-                    if(perc > plast):
-                            plast = perc
-                            print(perc, end="")
-                            print("%")
-                    q += 1
-                data[i] = output + '\n'
-                i += 1
-            dataout = open("data.txt", 'w')
-            dataout.writelines(data)
-            dataout.close()
-            print("Decryption Completed")
-        else:
-                print("Please enter 'e' or 'd'")
+	ed = input("Encrypt of Decrypt: ").upper()
+	if(ed == "E" or ed == "ENCRYPT"):
+		output = []
+		m = input("Enter message: ")
+		k = eval(input("Enter Public Key: "))
+		print("YOUR N is: " + str(n))
+		k2 = eval(input("Enter N Value: "))
+		for letter in m:
+			output.append(ersa(letter, k, k2))
+		print(output)
+	elif(ed == "D" or ed == "DECRYPT"):
+		output = ""
+		m = eval(input("Enter list: "))
+		i = 0
+		plast = 0
+		for item in m:
+			output += drsaa(item,dp,dq,p,q)
+			perc = round(i / len(m) * 100, 0)
+			if(perc > plast):
+				plast = perc
+				print(perc + "%")
+			i += 1
+		print(output)
+	else:
+		print("Please enter 'e' or 'd'")
