@@ -34,6 +34,8 @@ def phi(n):
 #If opens config
 filein = open("config.txt", 'r')
 fdat = filein.readlines()
+for i in range(0,len(fdat)):
+	fdat[i] = eval(fdat[i])
 filein.close()
 #First line of config is first run or not (1 is no)
 if(len(fdat)<=7):
@@ -48,18 +50,20 @@ if(len(fdat)<=7):
 	filein.close()
 	r1 = 0
 else:
-	r1 = eval(fdat[0])
-for i in range(0,len(fdat)):
-	fdat[i] = eval(fdat[i])
+	r1 = fdat[0]
+
 if(r1 == 1):
 	#If not first run, read data with long process time and check other data that affects LCM is changed
 	lcmt = open("config.txt", 'r')
 	fdat = lcmt.readlines()
+	for i in range(0,len(fdat)):
+		fdat[i] = eval(fdat[i])
 	lcmt.close()
-	lcm = eval(fdat[1])
-	if(p != eval(fdat[2]) or q != eval(fdat[3]) or e != eval(fdat[4])):
-		#If changed, run the first run script
-		r1 = 0
+	lcm = fdat[1]
+	p = fdat[2]
+	q = fdat[3]
+	n = p * q
+	e = fdat[4]
 if(r1 == 0):
 	if(manOverride == 0):
 		p = numInput("Enter a prime number: ")
@@ -86,10 +90,9 @@ if(r1 == 0):
 	fileout.writelines(fdat)
 	fileout.close()
 	print("Your RSA encryption system is now set up with the parameters provided")
-
-if(type(lcm/e) == 'float'):
-	#Ensure parameter of RSA is correct
-	raise Exception('Your encryption key is not coprime with lcm (try a different number)')
+	if(type(lcm/e) == 'float'):
+		#Ensure parameter of RSA is correct
+		raise Exception('Your encryption key is not coprime with lcm (try a different number)')
 
 
 def egcd(a, b):
@@ -180,7 +183,7 @@ while True:
 			perc = round(i / len(m) * 100, 0)
 			if(perc > plast):
 				plast = perc
-				print(perc + "%")
+				print(str(perc) + "%")
 			i += 1
 		print(output)
 	else:
