@@ -230,5 +230,8 @@ while True:
 		dataout.writelines(data)
 		dataout.close()
 		print("Decryption Completed")
+	elif(ed == "Q" or ed == "QUIT"):
+		print("Quitting Program")
+		break
 	else:
 		print("Please enter 'e' or 'd'")
