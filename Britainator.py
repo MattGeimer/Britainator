@@ -163,7 +163,7 @@ def drsaa(m,dp,dq,p,q):
 
 
 while True:
-	ed = input("Encrypt of Decrypt: ").upper()
+	ed = str(input("Encrypt of Decrypt: ")).upper()
 	if(ed == "E" or ed == "ENCRYPT"):
 		output = []
 		m = input("Enter message: ")
