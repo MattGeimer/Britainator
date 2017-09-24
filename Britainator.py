@@ -186,5 +186,49 @@ while True:
 				print(str(perc) + "%")
 			i += 1
 		print(output)
+	elif(ed == "DATAE"):
+		data = []
+		datain = open("data.txt", 'r')
+		data = datain.readlines()
+		datain.close()
+		output = []
+		k = eval(input("Enter Public Key: "))
+		print("YOUR N is:", end=" ")
+		print(n)
+		k2 = eval(input("Enter N Value: "))
+		i=0
+		for item in data:
+			m = data[i]
+			for letter in m:
+					output.append(ersa(letter, k, k2))
+			data[i] = str(output) + '\n'
+			i += 1
+		dataout = open("data.txt", 'w')
+		dataout.writelines(data)
+		dataout.close()
+		data = []
+	elif(ed == "DATAD"):
+		datain = open("data.txt", 'r')
+		data = datain.readlines()
+		datain.close()
+		i=0
+		for item in data:
+			output = ""
+			m = eval(data[i])
+			plast = 0
+			for item in m:
+				output += drsa(item, d, n)
+				perc = round(i * q / (len(m) * len(data)) * 100, 0)
+				if(perc > plast):
+						plast = perc
+						print(perc, end="")
+						print("%")
+				q += 1
+			data[i] = output + '\n'
+			i += 1
+		dataout = open("data.txt", 'w')
+		dataout.writelines(data)
+		dataout.close()
+		print("Decryption Completed")
 	else:
 		print("Please enter 'e' or 'd'")
