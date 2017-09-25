@@ -180,7 +180,7 @@ while True:
 		print(output)
 	elif(ed == "D" or ed == "DECRYPT"):
 		output = ""
-		m = numInput("Enter list: ")
+		m = eval(input("Enter list: "))
 		i = 0
 		plast = 0
 		for item in m:
@@ -222,7 +222,7 @@ while True:
 			m = eval(data[i])
 			plast = 0
 			for item in m:
-				output += drsa(item, d, n)
+				output += drsaa(item, dp,dq,p,q)
 				perc = round(i * q / (len(m) * len(data)) * 100, 0)
 				if(perc > plast):
 						plast = perc
