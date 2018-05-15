@@ -204,8 +204,9 @@ while True:
 		i=0
 		for item in data:
 			m = data[i]
+			output = []
 			for letter in m:
-					output.append(ersa(letter, k, k2))
+				output.append(ersa(letter, k, k2))
 			data[i] = str(output) + '\n'
 			i += 1
 		dataout = open("data.txt", 'w')
@@ -221,15 +222,11 @@ while True:
 			output = ""
 			m = eval(data[i])
 			plast = 0
-			for item in m:
-				output += drsaa(item, dp,dq,p,q)
-				perc = round(i * q / (len(m) * len(data)) * 100, 0)
-				if(perc > plast):
-						plast = perc
-						print(perc, end="")
-						print("%")
-				q += 1
-			data[i] = output + '\n'
+			output = ""
+			for char in m:
+				#Debug drsaa function inputs --> print("Char: "+str(char)+" DP: "+str(dp)+" DQ: "+str(dq)+" P: "+str(p)+" Q: "+str(q))
+				output += drsaa(char, dp,dq,p,q)
+			data[i] = output
 			i += 1
 		dataout = open("data.txt", 'w')
 		dataout.writelines(data)
