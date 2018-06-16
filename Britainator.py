@@ -35,6 +35,21 @@ def phi(n):
 
 	return amount
 
+def gcd(x, y):
+   """This function implements the Euclidian algorithm
+   to find G.C.D. of two numbers"""
+   while(y):
+       x, y = y, x % y
+
+   return x
+
+# define lcm function
+def lcmFunc(x, y):
+   """This function takes two
+   integers and returns the L.C.M."""
+   lcmTemp = (x*y)//gcd(x,y)
+   return lcmTemp
+
 #opens config to check if run before and if config is correctly setup
 filein = open("config.txt", 'r')
 fdat = filein.readlines()
@@ -78,7 +93,7 @@ if(r1 == 0):
 	else:
 		n = p * q
 	#Find Euler's totient
-	lcm = phi(n)
+	lcm = lcmFunc((p-1),(q-1))
 	#^ Longest processing time
 	#Open config file and load into fdat list
 	fileout = open("config.txt", 'r')
